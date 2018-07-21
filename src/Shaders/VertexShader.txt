@@ -1,0 +1,30 @@
+#version 400 core
+
+in vec2 texcoords;
+in vec3 position;
+in vec3 normal;
+
+
+out vec2 pass_texcoords;
+out vec3 surfacenormal;
+out vec3 tolightvector;
+out vec3 tocameravector;
+
+
+uniform mat4 transformationmatrix;
+uniform mat4 projectionmatrix;
+uniform mat4 viewmatrix;
+uniform vec3 lightpos;
+
+
+void main(void)
+{
+
+	vec4 worldposition = transformationmatrix * vec4(position,1.0);
+	gl_Position = projectionmatrix * viewmatrix * worldposition;
+	pass_texcoords = texcoords;
+	
+	surfacenormal = (transformationmatrix * vec4(normal, 0.0)).xyz;
+	tolightvector = lightpos - worldposition.xyz;
+	tocameravector = (inverse(viewmatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldposition.xyz;
+}
